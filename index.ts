@@ -1,10 +1,13 @@
 import http from "http";
+import app from "./src/api/app";
+import * as EmailTransport from "./src/lib/transports/email";
 
+const PORT = process.env.PORT || 8000;
+
+EmailTransport.testEmailConnection(EmailTransport.transporter);
 http
-  .createServer(function (req, res) {
-    if (req.url === "/") {
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.end();
-    }
-  })
-  .listen(8000)
+  .createServer(app)
+  .listen(PORT, () => {
+    console.log("Server connection has been established successfully.", PORT);
+  });
+
