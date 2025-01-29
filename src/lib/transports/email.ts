@@ -12,11 +12,8 @@ const transporter = nodemailer.createTransport({
 
 function testEmailConnection(connection: Transporter) {
   connection.verify(function (err, success) {
-    if (err) {
-      Logger.error(err.message, err);
-    } else {
-      Logger.info("Email service running...");
-    }
+    if (err) return Logger.error(err.message, err);
+    Logger.info("Email service running...");
   });
 }
 

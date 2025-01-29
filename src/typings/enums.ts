@@ -1,0 +1,16 @@
+enum AccountStatus {
+  ACTIVE = "ACTIVE",
+  SUSPENDED = "SUSPENDED"
+}
+
+enum OtpTypes {
+  VERIFY_EMAIL = "VERIFY_EMAIL",
+  FORGOT_PASSWORD = "FORGOT_PASSWORD",
+  RESET_PASSWORD = "RESET_PASSWORD",
+  CHANGE_PASSWORD = "CHANGE_PASSWORD"
+}
+
+export {
+  AccountStatus,
+  OtpTypes
+}

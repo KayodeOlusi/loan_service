@@ -1,6 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import "reflect-metadata";
 import buildAppRoutes from "./routes/init.route";
 import ReqLogger from "../api/middlewares/req-logger.middleware";
 
