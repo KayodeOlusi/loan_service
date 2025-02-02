@@ -37,7 +37,7 @@ Account.init({
     defaultValue: DataTypes.UUIDV4,
     primaryKey: true
   },
-  user_id: DataTypes.STRING,
+  user_id: DataTypes.UUID,
   balance: DataTypes.DECIMAL(30, 2),
   status: DataTypes.ENUM("ACTIVE", "SUSPENDED"),
   createdAt: DataTypes.DATE,
@@ -46,6 +46,7 @@ Account.init({
 }, {
   sequelize: sequelize,
   modelName: 'Account',
+  freezeTableName: true
 });
 
 export default Account;

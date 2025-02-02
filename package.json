@@ -2,9 +2,10 @@
   "name": "loan_service",
   "version": "1.0.0",
   "description": "Loan service application",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "start:dev": "npx nodemon",
+    "migrate:up": "ts-node src/db/migrate.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

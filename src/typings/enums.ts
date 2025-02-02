@@ -3,6 +3,13 @@ enum AccountStatus {
   SUSPENDED = "SUSPENDED"
 }
 
+enum EmailTypes {
+  SIGN_UP = "Welcome",
+  FORGOT_PASSWORD = "Forgot Password",
+  RESET_PASSWORD = "Reset Password",
+  CHANGE_PASSWORD = "Change Password"
+}
+
 enum OtpTypes {
   VERIFY_EMAIL = "VERIFY_EMAIL",
   FORGOT_PASSWORD = "FORGOT_PASSWORD",
@@ -12,5 +19,6 @@ enum OtpTypes {
 
 export {
   AccountStatus,
-  OtpTypes
+  OtpTypes,
+  EmailTypes
 }

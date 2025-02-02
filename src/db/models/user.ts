@@ -46,6 +46,7 @@ User.init({
 }, {
   sequelize: sequelize,
   modelName: 'User',
+  freezeTableName: true
 });
 
 export default User;

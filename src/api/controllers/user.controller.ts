@@ -5,19 +5,23 @@ import { ApiBuilders } from "../api.builders";
 import { Request, Response } from "express";
 import { HttpStatusCodes } from "../../lib/codes";
 import { UserCreationBody } from "../../typings/user";
-import { AccountStatus } from "../../typings/enums";
-import { EncryptService, UserService, AccountService } from "../services";
+import { AccountStatus, OtpTypes } from "../../typings/enums";
+import { AccountService, EncryptService, MailService, OtpService, UserService } from "../services";
 
 @autoInjectable()
 class UserController {
   private UserService: UserService;
   private AccountService: AccountService;
   private EncryptService: EncryptService;
+  private OtpService: OtpService;
+  private MailService: MailService;
 
-  constructor(_userService: UserService, _accountService: AccountService, _encryptService: EncryptService) {
+  constructor(_userService: UserService, _accountService: AccountService, _encryptService: EncryptService, _otpService: OtpService, _mailService: MailService) {
     this.UserService = _userService;
     this.AccountService = _accountService;
     this.EncryptService = _encryptService;
+    this.OtpService = _otpService;
+    this.MailService = _mailService;
   }
 
   private async _createUserRecord(data: UserCreationBody) {
@@ -150,7 +154,7 @@ class UserController {
 
   }
 
-  forgotPassword =  async (req: Request, res: Response) => {
+  forgotPassword = async (req: Request, res: Response) => {
     const { email } = req.body;
     try {
       const user = await this.UserService.getUserByField({ email });
@@ -163,9 +167,14 @@ class UserController {
         });
       }
 
-      // TODO: Send forgot password email
+      /*
+      * TODO:
+      *   1. Verify code
+      *   2. Change user password
+      * */
     } catch (e) {
       const error = e as Exception;
+      Logger.error(error.message, error);
       return ApiBuilders.buildResponse(res, {
         status: false,
         code: error.code || HttpStatusCodes.SERVER_ERROR,

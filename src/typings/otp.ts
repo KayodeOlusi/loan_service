@@ -5,7 +5,7 @@ export type OtpAttributes = {
   user_id: string;
   code: string;
   expires_at: Date;
-  type: OtpTypes;
+  otp_type: OtpTypes;
   createdAt: Date;
   updatedAt: Date;
 }
