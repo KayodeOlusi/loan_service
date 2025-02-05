@@ -12,7 +12,7 @@ class EncryptService {
   hash(str: string) {
     return bcrypt.hashSync(str, saltRounds);
   }
-  generateToken(data: any) {
+  generateJWT(data: any) {
     return this._createToken(data);
   }
 
@@ -20,7 +20,7 @@ class EncryptService {
     return await bcrypt.compare(data, encrypted);
   }
 
-  verify(token: string, compare: string) {
+  verifyJWT(token: string, compare: string) {
     return jwt.verify(token, compare);
   }
 }

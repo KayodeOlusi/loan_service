@@ -20,9 +20,9 @@ function createUserRoute() {
     Controller.login
   );
   router.post(
-    "/forgot-password",
-    [RateLimiter({}), validator(UserValidatorSchema.ForgotPassword)],
-    Controller.forgotPassword
+    "/reset-password",
+    [RateLimiter({}), validator(UserValidatorSchema.ResetPassword)],
+    Controller.resetPassword
   );
   router.post(
     "/change-password",

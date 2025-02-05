@@ -10,5 +10,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "types": ["node"]
-  }
+  },
+  "include": [
+    "src/typings/express.d.ts"
+  ]
 }

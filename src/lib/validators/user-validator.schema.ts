@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import { OtpTypes } from "../../typings/enums";
 
 const UserValidatorSchema = {
   RegisterUser: yup.object({
@@ -12,8 +13,11 @@ const UserValidatorSchema = {
     email: yup.string().lowercase().email().trim().required(),
     password: yup.string().trim().required()
   }),
-  ForgotPassword: yup.object({
-    email: yup.string().lowercase().email().trim().required()
+  ResetPassword: yup.object({
+    email: yup.string().lowercase().email().trim().required(),
+    code: yup.string().trim().length(4),
+    password: yup.string().min(8).required(),
+    type: yup.mixed<OtpTypes>().oneOf([OtpTypes.RESET_PASSWORD]).required(),
   }),
   ChangePassword: yup.object({
     old_password: yup.string().min(8).required(),

@@ -1,6 +1,6 @@
 import { UserDao } from "../dao";
 import { autoInjectable } from "tsyringe";
-import { FindOptions } from "sequelize";
+import { FindOptions, UpdateOptions } from "sequelize";
 import { UserAttributes, UserCreationBody } from "../../typings/user";
 
 @autoInjectable()
@@ -21,6 +21,10 @@ class UserService {
   async createUser(user: UserCreationBody) {
     let record = user as UserAttributes;
     return await this.UserDAO.create(record);
+  }
+
+  async update(record: Partial<UserAttributes>, opts: UpdateOptions) {
+    return await this.UserDAO.updateOne(record, opts);
   }
 }
 

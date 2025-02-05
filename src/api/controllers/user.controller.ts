@@ -1,12 +1,17 @@
-import Logger from "../../lib/logger";
 import { autoInjectable } from "tsyringe";
-import { Exception } from "../../lib/errors";
 import { ApiBuilders } from "../api.builders";
 import { Request, Response } from "express";
 import { HttpStatusCodes } from "../../lib/codes";
 import { UserCreationBody } from "../../typings/user";
 import { AccountStatus, OtpTypes } from "../../typings/enums";
+import { handleError } from "../../utils/handlers/error.handler";
+import { Exception, ValidationException } from "../../lib/errors";
 import { AccountService, EncryptService, MailService, OtpService, UserService } from "../services";
+
+/*
+* TODO:
+*  1. Fix req.user.id error from Request type
+* */
 
 @autoInjectable()
 class UserController {
@@ -16,7 +21,13 @@ class UserController {
   private OtpService: OtpService;
   private MailService: MailService;
 
-  constructor(_userService: UserService, _accountService: AccountService, _encryptService: EncryptService, _otpService: OtpService, _mailService: MailService) {
+  constructor(
+    _userService: UserService,
+    _accountService: AccountService,
+    _encryptService: EncryptService,
+    _otpService: OtpService,
+    _mailService: MailService
+  ) {
     this.UserService = _userService;
     this.AccountService = _accountService;
     this.EncryptService = _encryptService;
@@ -27,6 +38,15 @@ class UserController {
   private async _createUserRecord(data: UserCreationBody) {
     const user = await this.UserService.createUser(data);
     if (!user) throw new Exception("Error creating user account. Try again later");
+
+    return user;
+  }
+
+  private async _verifyUserByField(where: string, target: string) {
+    const user = await this.UserService.getUserByField({
+      [where]: target
+    });
+    if (!user) throw new ValidationException("User does not exist!");
 
     return user;
   }
@@ -78,6 +98,16 @@ class UserController {
       let newUser = { ...user.toJSON() };
       delete (newUser as any).password;
 
+      const verificationCode = await this.OtpService.createOtp({
+        user_id: newUser.id,
+        type: OtpTypes.VERIFY_EMAIL
+      });
+      await this.MailService.sendMail({
+        to: newUser.email,
+        code: verificationCode,
+        type: OtpTypes.VERIFY_EMAIL
+      });
+
       return ApiBuilders.buildResponse(res, {
         status: true,
         data: newUser,
@@ -87,32 +117,14 @@ class UserController {
 
     } catch (e) {
       const error = e as Exception;
-
-      Logger.error(error.message, error);
-      return ApiBuilders.buildResponse(res, {
-        status: false,
-        code: error.code || HttpStatusCodes.SERVER_ERROR,
-        message: error.message || "An error occurred, Try again later",
-        data: null
-      });
+      handleError(error, res);
     }
   }
 
   login = async (req: Request, res: Response) => {
     try {
       const { email, password } = req.body;
-
-      const user = await this.UserService.getUserByField({
-        email: email.trim().toLocaleLowerCase()
-      });
-      if (!user) {
-        return ApiBuilders.buildResponse(res, {
-          status: false,
-          code: HttpStatusCodes.BAD_REQUEST,
-          message: "User does not exist",
-          data: null
-        });
-      }
+      const user = await this._verifyUserByField("email", email.toLocaleLowerCase().trim());
 
       const passwordMatch = await this.EncryptService.compare(password, user.password);
       if (!passwordMatch) {
@@ -124,7 +136,7 @@ class UserController {
         });
       }
 
-      const _token = this.EncryptService.generateToken(user);
+      const _token = this.EncryptService.generateJWT(user);
       const data = {
         token: _token,
         ...user.toJSON()
@@ -139,48 +151,72 @@ class UserController {
       })
     } catch (e) {
       const error = e as Exception;
-
-      Logger.error(error.message, error);
-      return ApiBuilders.buildResponse(res, {
-        status: false,
-        code: error.code || HttpStatusCodes.SERVER_ERROR,
-        message: error.message || "An error occurred, Try again later",
-        data: null
-      });
+      handleError(error, res);
     }
   }
 
   changePassword = async (req: Request, res: Response) => {
+    const { new_password, old_password } = req.body;
 
-  }
-
-  forgotPassword = async (req: Request, res: Response) => {
-    const { email } = req.body;
     try {
-      const user = await this.UserService.getUserByField({ email });
-      if (!user) {
+      const user = await this._verifyUserByField("id", req.user?.id as string);
+
+      const isValidOldPassword = await this.EncryptService.compare(
+        old_password,
+        user.password
+      );
+      if (!isValidOldPassword) {
         return ApiBuilders.buildResponse(res, {
+          status: false,
+          code: HttpStatusCodes.VALIDATION_ERROR,
           data: null,
-          message: "User does not exist",
-          code: HttpStatusCodes.NOT_FOUND,
-          status: false
+          message: "Old password does not match. Try again"
         });
       }
 
-      /*
-      * TODO:
-      *   1. Verify code
-      *   2. Change user password
-      * */
+      const newPassword = this.EncryptService.hash(new_password);
+      await this.UserService.update(
+        { password: newPassword },
+        { where: { id: user.id } }
+      );
+
+      return ApiBuilders.buildResponse(res, {
+        status: true,
+        data: null,
+        message: "Password updated successfully",
+        code: HttpStatusCodes.SUCCESSFUL_REQUEST
+      });
     } catch (e) {
       const error = e as Exception;
-      Logger.error(error.message, error);
-      return ApiBuilders.buildResponse(res, {
-        status: false,
-        code: error.code || HttpStatusCodes.SERVER_ERROR,
-        message: "An error occurred. Try again later",
-        data: null
+      handleError(error, res);
+    }
+  }
+
+  resetPassword = async (req: Request, res: Response) => {
+    const { password, email, code, type } = req.body;
+    try {
+      const user = await this._verifyUserByField("email", email.trim().toLocaleLowerCase());
+      await this.OtpService.verifyOtp({
+        user_id: user.id,
+        code,
+        type
       });
+
+      const newPassword = this.EncryptService.hash(password);
+      await this.UserService.update(
+        { password: newPassword },
+        { where: { id: user.id } }
+      );
+
+      return ApiBuilders.buildResponse(res, {
+        status: true,
+        data: null,
+        message: "Password has been reset successfully",
+        code: HttpStatusCodes.SUCCESSFUL_REQUEST
+      });
+    } catch (e) {
+      const error = e as Exception;
+      handleError(error, res);
     }
   }
 }
