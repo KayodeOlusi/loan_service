@@ -46,7 +46,15 @@ User.init({
 }, {
   sequelize: sequelize,
   modelName: 'User',
-  freezeTableName: true
+  freezeTableName: true,
+  defaultScope: {
+    attributes: { exclude: ["password"] }
+  },
+  scopes: {
+    withPassword: {
+      attributes: { include: ["password"] }
+    }
+  }
 });
 
 export default User;

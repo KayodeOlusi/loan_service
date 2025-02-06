@@ -2,7 +2,7 @@ import { UserAttributes } from "./user";
 
 declare global {
   namespace Express {
-    interface Request {
+    export interface Request {
       user?: UserAttributes;
     }
   }

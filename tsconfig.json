@@ -9,9 +9,9 @@
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "types": ["node"]
+    "types": ["node"],
   },
   "include": [
-    "src/typings/express.d.ts"
+    "src/**/*"
   ]
 }

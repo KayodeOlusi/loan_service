@@ -18,6 +18,19 @@ class UserService {
     });
   }
 
+  async getUserWithAllAttributes(record: Partial<UserAttributes>, opts?: FindOptions) {
+    return await this.UserDAO.fetchOneWithAllAttributes({
+      where: { ...record },
+      ...opts
+    });
+  }
+
+  async find(opts: FindOptions) {
+    return await this.UserDAO.fetchOneWithAllAttributes({
+      ...opts
+    });
+  }
+
   async createUser(user: UserCreationBody) {
     let record = user as UserAttributes;
     return await this.UserDAO.create(record);

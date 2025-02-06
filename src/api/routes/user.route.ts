@@ -2,7 +2,7 @@ import express from "express";
 import { container } from "tsyringe";
 import validator from "../../lib/validators";
 import { UserController } from "../controllers";
-import RateLimiter from "../middlewares/rate-limit.middleware";
+import { isAuthenticated, RateLimiter } from "../middlewares";
 import UserValidatorSchema from "../../lib/validators/user-validator.schema";
 
 const router = express.Router();
@@ -26,7 +26,7 @@ function createUserRoute() {
   );
   router.post(
     "/change-password",
-    [RateLimiter({}), validator(UserValidatorSchema.ChangePassword)],
+    [RateLimiter({}), isAuthenticated, validator(UserValidatorSchema.ChangePassword)],
     Controller.changePassword
   );
 

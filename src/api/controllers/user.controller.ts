@@ -2,16 +2,11 @@ import { autoInjectable } from "tsyringe";
 import { ApiBuilders } from "../api.builders";
 import { Request, Response } from "express";
 import { HttpStatusCodes } from "../../lib/codes";
-import { UserCreationBody } from "../../typings/user";
+import { UserAttributes, UserCreationBody } from "../../typings/user";
 import { AccountStatus, OtpTypes } from "../../typings/enums";
 import { handleError } from "../../utils/handlers/error.handler";
 import { Exception, ValidationException } from "../../lib/errors";
 import { AccountService, EncryptService, MailService, OtpService, UserService } from "../services";
-
-/*
-* TODO:
-*  1. Fix req.user.id error from Request type
-* */
 
 @autoInjectable()
 class UserController {
@@ -96,7 +91,7 @@ class UserController {
       await this.AccountService.createAccount(user.id);
 
       let newUser = { ...user.toJSON() };
-      delete (newUser as any).password;
+      delete (newUser as Partial<UserAttributes>).password;
 
       const verificationCode = await this.OtpService.createOtp({
         user_id: newUser.id,
@@ -124,7 +119,16 @@ class UserController {
   login = async (req: Request, res: Response) => {
     try {
       const { email, password } = req.body;
-      const user = await this._verifyUserByField("email", email.toLocaleLowerCase().trim());
+
+      const user = await this.UserService.getUserWithAllAttributes({ email });
+      if (!user) {
+        return ApiBuilders.buildResponse(res, {
+          status: false,
+          code: HttpStatusCodes.NOT_FOUND,
+          data: null,
+          message: "User does not exist"
+        });
+      }
 
       const passwordMatch = await this.EncryptService.compare(password, user.password);
       if (!passwordMatch) {
@@ -136,15 +140,17 @@ class UserController {
         });
       }
 
-      const _token = this.EncryptService.generateJWT(user);
-      const data = {
-        token: _token,
-        ...user.toJSON()
+      const JwtData: Partial<UserAttributes> = {
+        email: user.email,
+        id: user.id,
+        account_status: user.account_status,
+        is_verified: user.is_verified
       };
 
-      delete (data as any).password;
+      const token = this.EncryptService.generateJWT(JwtData);
+
       return ApiBuilders.buildResponse(res, {
-        data,
+        data: { user: JwtData, token },
         code: HttpStatusCodes.SUCCESSFUL_REQUEST,
         message: "User logged in successfully",
         status: true
@@ -157,9 +163,21 @@ class UserController {
 
   changePassword = async (req: Request, res: Response) => {
     const { new_password, old_password } = req.body;
+    const locals = res.locals.user;
 
     try {
-      const user = await this._verifyUserByField("id", req.user?.id as string);
+      const user = await this.UserService.getUserWithAllAttributes({
+        id: locals.id
+      });
+      if (!user) {
+        return ApiBuilders.buildResponse(res, {
+          status: false,
+          code: HttpStatusCodes.NOT_FOUND,
+          data: null,
+          message: "User does not exist"
+        });
+      }
+
 
       const isValidOldPassword = await this.EncryptService.compare(
         old_password,

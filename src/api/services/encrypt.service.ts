@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 const saltRounds = 10;
 class EncryptService {
   private _createToken(data: any) {
-    return jwt.sign({ data }, process.env.TOKEN_ID as string, {
+    return jwt.sign({ ...data }, process.env.TOKEN_ID as string, {
       expiresIn: "300000"
     });
   }

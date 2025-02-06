@@ -10,6 +10,10 @@ class UserDao {
     return await db.models.User.findOne(query);
   }
 
+  async fetchOneWithAllAttributes(query: FindOptions) {
+    return await db.models.User.scope("withPassword").findOne(query);
+  }
+
   async fetchAll(query: FindOptions) {
     return await db.models.User.findAll(query);
   }
