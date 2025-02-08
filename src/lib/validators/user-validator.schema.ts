@@ -22,7 +22,12 @@ const UserValidatorSchema = {
   ChangePassword: yup.object({
     old_password: yup.string().min(8).required(),
     new_password: yup.string().min(8).required(),
-  })
+  }),
+  VerifyUser: yup.object({
+    otp: yup.string().trim().length(4).required(),
+    email: yup.string().email().required(),
+    otpType: yup.mixed<OtpTypes>().oneOf(Object.values(OtpTypes)).required()
+  }),
 }
 
 export default UserValidatorSchema;

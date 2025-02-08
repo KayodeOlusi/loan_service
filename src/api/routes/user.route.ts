@@ -29,6 +29,11 @@ function createUserRoute() {
     [RateLimiter({}), isAuthenticated, validator(UserValidatorSchema.ChangePassword)],
     Controller.changePassword
   );
+  router.post(
+    "/verify",
+    [RateLimiter({}), validator(UserValidatorSchema.VerifyUser)],
+    Controller.verify
+  );
 
   return router;
 }

@@ -237,6 +237,33 @@ class UserController {
       handleError(error, res);
     }
   }
+
+  verify = async (req: Request, res: Response) => {
+    try {
+      const { email, otp, type } = req.body;
+      const user = await this._verifyUserByField("email", email.trim().toLocaleLowerCase());
+      await this.OtpService.verifyOtp({
+        code: otp,
+        type,
+        user_id: user.id
+      });
+
+      await this.UserService.update(
+        { is_verified: true },
+        { where: { id: user.id } }
+      );
+
+      return ApiBuilders.buildResponse(res, {
+        status: true,
+        data: null,
+        message: "User account verified successfully",
+        code: HttpStatusCodes.SUCCESSFUL_REQUEST
+      });
+    } catch (e) {
+      const error = e as Exception;
+      handleError(error, res);
+    }
+  }
 }
 
 export default UserController;

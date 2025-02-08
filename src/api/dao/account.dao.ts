@@ -10,7 +10,7 @@ class AccountDao {
     return await db.models.Account.findOne(query);
   }
 
-   async fetchAll(query: FindOptions) {
+   async fetchAll(query?: FindOptions) {
     return await db.models.Account.findAll(query);
   }
 

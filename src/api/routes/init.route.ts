@@ -1,5 +1,5 @@
-import { UserRoute } from ".";
 import { Express } from "express";
+import { AccountRoute, OtpRoute, UserRoute } from ".";
 import { ApiBuilders } from "../api.builders";
 import { HttpStatusCodes } from "../../lib/codes";
 
@@ -19,6 +19,8 @@ function buildAppRoutes(app: Express) {
     });
 
     app.use(baseRoutes("/user"), UserRoute());
+    app.use(baseRoutes("/account"), AccountRoute());
+    app.use(baseRoutes("/otp"), OtpRoute());
   })();
 }
 

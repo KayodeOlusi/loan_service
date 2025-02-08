@@ -63,6 +63,25 @@ class AccountService {
       throw e;
     }
   }
+
+  async getAccounts(opts?: FindOptions) {
+    try {
+      return await this.AccountDAO.fetchAll(opts);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  async getAccount(query: Partial<AccountAttributes>, opts?: FindOptions) {
+    try {
+      return await this.AccountDAO.fetchOne({
+        where: { ...query },
+        ...opts
+      });
+    } catch (e) {
+      throw e;
+    }
+  }
 }
 
 export default AccountService;
