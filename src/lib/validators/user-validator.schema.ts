@@ -26,7 +26,7 @@ const UserValidatorSchema = {
   VerifyUser: yup.object({
     otp: yup.string().trim().length(4).required(),
     email: yup.string().email().required(),
-    otpType: yup.mixed<OtpTypes>().oneOf(Object.values(OtpTypes)).required()
+    type: yup.mixed<OtpTypes>().oneOf(Object.values(OtpTypes)).required()
   }),
 }
 

@@ -2,7 +2,7 @@ import { OtpDao } from "../dao";
 import { EncryptService } from ".";
 import { autoInjectable } from "tsyringe";
 import { OtpTypes } from "../../typings/enums";
-import { ValidationException } from "../../lib/errors";
+import { NotFoundException, ValidationException } from "../../lib/errors";
 
 @autoInjectable()
 class OtpService {
@@ -63,10 +63,10 @@ class OtpService {
       where: { otp_type: type, user_id }
     });
 
-    if (!otp) throw new ValidationException("Otp does not exist");
+    if (!otp) throw new NotFoundException("Otp does not exist");
 
     const otpMatch = await this.EncryptService.compare(code, otp.code);
-    if (!otpMatch) throw new ValidationException("Otp does not exist");
+    if (!otpMatch) throw new NotFoundException("Otp does not exist");
 
     const currentTime = new Date();
     const expiryDate = new Date(otp.expires_at);
