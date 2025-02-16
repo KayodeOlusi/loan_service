@@ -3,6 +3,8 @@ import { EncryptService } from ".";
 import { autoInjectable } from "tsyringe";
 import { OtpTypes } from "../../typings/enums";
 import { NotFoundException, ValidationException } from "../../lib/errors";
+import { DestroyOptions } from "sequelize";
+import { OtpAttributes } from "../../typings/otp";
 
 @autoInjectable()
 class OtpService {
@@ -79,6 +81,17 @@ class OtpService {
         code: otp.code
       }
     });
+  }
+
+  async deleteOtp(record: Partial<OtpAttributes>, opts?: DestroyOptions) {
+    try {
+      await this.OtpDao.delete({
+        where: { ...record },
+        ...opts,
+      });
+    } catch (e) {
+      throw e;
+    }
   }
 }
 

@@ -5,6 +5,7 @@ enum AccountStatus {
 
 enum EmailTypes {
   SIGN_UP = "Welcome",
+  VERIFY_EMAIL = "Verify email",
   FORGOT_PASSWORD = "Forgot Password",
   RESET_PASSWORD = "Reset Password",
   CHANGE_PASSWORD = "Change Password"

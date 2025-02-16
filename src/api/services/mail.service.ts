@@ -13,6 +13,21 @@ class MailService {
     }
   }
 
+  private _getEmailType(type: OtpTypes) {
+    switch (type) {
+      case OtpTypes.VERIFY_EMAIL:
+        return EmailTypes.VERIFY_EMAIL;
+      case OtpTypes.CHANGE_PASSWORD:
+        return EmailTypes.CHANGE_PASSWORD;
+      case OtpTypes.FORGOT_PASSWORD:
+        return EmailTypes.FORGOT_PASSWORD
+      case OtpTypes.RESET_PASSWORD:
+        return EmailTypes.RESET_PASSWORD;
+      default:
+        return EmailTypes.SIGN_UP;
+    }
+  }
+
   async sendMail({ to, code, type }: {
     to: string;
     type: OtpTypes;
@@ -21,7 +36,7 @@ class MailService {
     try {
       return await this.mailTransport.sendMail({
         to,
-        subject: EmailTypes.FORGOT_PASSWORD,
+        subject: this._getEmailType(type),
         from: "Loan Service",
         html: this.getMailContent(type, code)
       });
