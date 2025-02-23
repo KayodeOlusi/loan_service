@@ -77,7 +77,7 @@ class OtpService {
     await this.OtpDao.delete({
       where: {
         user_id,
-        type,
+        otp_type: type,
         code: otp.code
       }
     });

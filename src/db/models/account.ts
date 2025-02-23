@@ -6,6 +6,7 @@ import {
 import sequelize from "../init";
 import { AccountStatus } from "../../typings/enums";
 import { AccountAttributes } from "../../typings/account";
+import { ModelInstances } from "./types";
 
 export interface AccountCreationAttributes extends Optional<AccountAttributes, "id" | "createdAt" | "updatedAt"> {}
 class Account extends Model<AccountAttributes, AccountCreationAttributes> implements AccountAttributes {
@@ -23,11 +24,11 @@ class Account extends Model<AccountAttributes, AccountCreationAttributes> implem
    * This method is not a part of Sequelize lifecycle.
    * The `models/index` file will call this method automatically.
    */
-  static associate(models: any) {
+  static associate(models: ModelInstances) {
     // define association here
-    Account.belongsTo(models.User, {
-      foreignKey: "user_id"
-    });
+    // Account.belongsTo(models.User, {
+    //   foreignKey: "user_id"
+    // });
   }
 }
 

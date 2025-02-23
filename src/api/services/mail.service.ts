@@ -8,6 +8,8 @@ class MailService {
     switch (type) {
       case OtpTypes.VERIFY_EMAIL:
         return `Your code to verify your email is ${code}. It expires in 5 minutes.`;
+        case OtpTypes.RESET_PASSWORD:
+        return `Your code to reset your password is ${code}. It expires in 5 minutes.`;
       default:
         return ``;
     }

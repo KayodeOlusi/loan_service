@@ -31,9 +31,9 @@ class AccountController {
 
   getAccount = async (req: Request, res: Response) => {
     try {
-      const id = req.params.id;
+      const user_id = req.params.user_id;
       const account = await this.AccountService.getAccount({
-        id,
+        user_id,
       });
       if (!account) {
         return ApiBuilders.buildResponse(res, {

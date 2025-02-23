@@ -7,6 +7,10 @@ const OtpValidatorSchema = {
     email: yup.string().email().required(),
     otpType: yup.mixed<OtpTypes>().oneOf(Object.values(OtpTypes)).required()
   }),
+  RequestOtp: yup.object({
+    email: yup.string().email().required(),
+    otpType: yup.mixed<OtpTypes>().oneOf(Object.values(OtpTypes)).required()
+  }),
   ResendOtp: yup.object({
     otpType: yup.mixed<OtpTypes>().oneOf(Object.values(OtpTypes)).required(),
     email: yup.string().email().required()

@@ -16,6 +16,12 @@ function createOtpRoute() {
   );
 
   router.post(
+    "/request",
+    [RateLimiter({ exp: 30, max: 1 }), validator(OtpValidatorSchema.RequestOtp)],
+    Controller.requestOtp
+  );
+
+  router.post(
     "/resend",
     [RateLimiter({ exp: 30, max: 2 }), validator(OtpValidatorSchema.ResendOtp)],
     Controller.resendOtp

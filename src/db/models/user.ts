@@ -3,6 +3,8 @@ import sequelize from "../init";
 import { UserAttributes } from "../../typings/user";
 import { AccountStatus } from "../../typings/enums";
 import { Model, DataTypes, Optional } from 'sequelize';
+import { ModelInstances } from "./types";
+import { models } from "../index";
 
 export interface UserCreationAttributes extends Optional<UserAttributes, "id" | "createdAt" | "updatedAt"> {}
 
@@ -23,7 +25,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
    * This method is not a part of Sequelize lifecycle.
    * The `models/index` file will call this method automatically.
    */
-  static associate(models: any) {
+  static associate(models: ModelInstances) {
     // define association here
   }
 }
@@ -56,5 +58,9 @@ User.init({
     }
   }
 });
+
+// User.associate = (models) => {
+//   User.hasOne(models.Account, { foreignKey: "user_id" });
+// }
 
 export default User;

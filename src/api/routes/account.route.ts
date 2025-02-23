@@ -12,7 +12,7 @@ function createAccountRoute() {
     Controller.getAllAccounts
   );
   router.get(
-    "/:id",
+    "/:user_id",
     [RateLimiter({ max: 10 }), isAuthenticated],
     Controller.getAccount
   );
