@@ -7,6 +7,7 @@ const config = dbConfig[env];
 const sequelize = new Sequelize(config.database, config.username, config.password, {
   dialect: config.dialect,
   logging: config.logging,
+  host: config.host
 });
 
 export default sequelize;

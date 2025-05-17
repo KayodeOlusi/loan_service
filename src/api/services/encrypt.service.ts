@@ -20,6 +20,7 @@ class EncryptService {
     return await bcrypt.compare(data, encrypted);
   }
 
+
   verifyJWT(token: string, compare: string) {
     return jwt.verify(token, compare);
   }

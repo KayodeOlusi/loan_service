@@ -1,5 +1,4 @@
 import db from ".";
-import { Otp } from "./models";
 async function DbBootstrap(callback: Function) {
   try {
     await db.sequelize.authenticate();
