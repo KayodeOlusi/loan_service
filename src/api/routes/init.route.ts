@@ -1,7 +1,7 @@
 import { Express } from "express";
-import { AccountRoute, OtpRoute, UserRoute } from ".";
 import { ApiBuilders } from "../api.builders";
 import { HttpStatusCodes } from "../../lib/codes";
+import { AccountRoute, LoanRoute, OtpRoute, TransactionRoute, UserRoute } from ".";
 
 function baseRoutes(route: string = "") {
   return "/api" + route;
@@ -21,6 +21,8 @@ function buildAppRoutes(app: Express) {
     app.use(baseRoutes("/user"), UserRoute());
     app.use(baseRoutes("/account"), AccountRoute());
     app.use(baseRoutes("/otp"), OtpRoute());
+    app.use(baseRoutes("/loan"), LoanRoute());
+    app.use(baseRoutes("/transaction"), TransactionRoute());
   })();
 }
 

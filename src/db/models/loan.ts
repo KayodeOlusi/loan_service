@@ -66,3 +66,5 @@ Loan.init({
   modelName: 'Loan',
   freezeTableName: true
 });
+
+export default Loan;

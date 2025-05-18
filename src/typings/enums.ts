@@ -34,10 +34,24 @@ enum LoanRepaymentFrequency {
   YEARLY = "YEARLY"
 }
 
+enum TransactionStatus {
+  PENDING = "PENDING",
+  SUCCESS = "SUCCESS",
+  FAILED = "FAILED"
+}
+
+enum TransactionTypes {
+  LOAN = "LOAN",
+  REPAYMENT = "REPAYMENT",
+  FEE = "FEE",
+}
+
 export {
   AccountStatus,
   OtpTypes,
   EmailTypes,
   LoanStatus,
-  LoanRepaymentFrequency
+  LoanRepaymentFrequency,
+  TransactionStatus,
+  TransactionTypes
 }

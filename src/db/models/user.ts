@@ -22,11 +22,14 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   declare readonly createdAt: Date;
   /**
    * Helper method for defining associations.
-   * This method is not a part of Sequelize lifecycle.
+   * This method is not a part of the Sequelize lifecycle.
    * The `models/index` file will call this method automatically.
    */
   static associate(models: ModelInstances) {
     // define association here
+    // User.hasOne(models.Account, {
+    //   foreignKey: "account_id",
+    // });
   }
 }
 
@@ -58,9 +61,5 @@ User.init({
     }
   }
 });
-
-// User.associate = (models) => {
-//   User.hasOne(models.Account, { foreignKey: "user_id" });
-// }
 
 export default User;
