@@ -18,8 +18,26 @@ enum OtpTypes {
   CHANGE_PASSWORD = "CHANGE_PASSWORD"
 }
 
+enum LoanStatus {
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+  DISBURSED = "DISBURSED",
+  PAID_OFF = "PAID_OFF"
+}
+
+enum LoanRepaymentFrequency {
+  WEEKLY = "WEEKLY",
+  BI_WEEKLY = "BI_WEEKLY",
+  MONTHLY = "MONTHLY",
+  QUARTERLY = "QUARTERLY",
+  YEARLY = "YEARLY"
+}
+
 export {
   AccountStatus,
   OtpTypes,
-  EmailTypes
+  EmailTypes,
+  LoanStatus,
+  LoanRepaymentFrequency
 }

@@ -21,7 +21,7 @@ class Account extends Model<AccountAttributes, AccountCreationAttributes> implem
 
   /**
    * Helper method for defining associations.
-   * This method is not a part of Sequelize lifecycle.
+   * This method is not a part of the Sequelize lifecycle.
    * The `models/index` file will call this method automatically.
    */
   static associate(models: ModelInstances) {
