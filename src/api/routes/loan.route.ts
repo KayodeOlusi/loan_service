@@ -1,7 +1,10 @@
 import express from "express";
+import { container } from "tsyringe";
+import { LoanController } from "../controllers";
 import { isAuthenticated, RateLimiter } from "../middlewares";
 
 const router = express.Router();
+const Controller = container.resolve(LoanController);
 
 function createLoanRoute() {
   router.get(

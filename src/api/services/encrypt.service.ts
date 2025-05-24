@@ -5,7 +5,7 @@ const saltRounds = 10;
 class EncryptService {
   private _createToken(data: any) {
     return jwt.sign({ ...data }, process.env.TOKEN_ID as string, {
-      expiresIn: "300000"
+      expiresIn: "30m"
     });
   }
 
