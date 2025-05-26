@@ -13,20 +13,20 @@ function createLoanRoute() {
     () => {}
   );
   router.get(
-    "/:loan_id",
-    [RateLimiter({ max: 10 }), isAuthenticated],
-    () => {}
-  );
-  router.get(
-    "/:user_id",
-    [RateLimiter({ max: 10 }), isAuthenticated],
-    () => {}
-  );
-  router.get(
     "/eligibility/:user_id",
     [RateLimiter({ max: 10 }), isAuthenticated],
-    () => {}
+    Controller.checkUserEligibility
   );
+  router.get(
+    "/tier/config",
+    [RateLimiter({ max: 10 }), isAuthenticated],
+    Controller.getTierConfig
+  );
+  router.get(
+    "/tier/config/all",
+    [RateLimiter({ max: 10 }), isAuthenticated],
+    Controller.getAllTiersConfig
+  )
 
   return router;
 }

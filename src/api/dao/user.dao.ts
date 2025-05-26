@@ -18,8 +18,8 @@ class UserDao {
     return await db.models.User.findAll(query);
   }
 
-  async fetchByPk(key: string) {
-    return await db.models.User.findByPk(key);
+  async fetchByPk(key: string, query?: FindOptions) {
+    return await db.models.User.findByPk(key, query);
   }
   
   async create(record: UserCreationAttributes) {

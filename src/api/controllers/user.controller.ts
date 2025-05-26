@@ -150,7 +150,8 @@ class UserController {
       const token = this.EncryptService.generateJWT(JwtData);
 
       return ApiBuilders.buildResponse(res, {
-        data: { user: JwtData, token },
+        data: JwtData,
+        addOns: { token },
         code: HttpStatusCodes.SUCCESSFUL_REQUEST,
         message: "User logged in successfully",
         status: true

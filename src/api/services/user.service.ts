@@ -11,6 +11,10 @@ class UserService {
     this.UserDAO = _userDao;
   }
 
+  async getUserById(id: string, opts?: FindOptions) {
+    return await this.UserDAO.fetchByPk(id, opts);
+  }
+
   async getUserByField(record: Partial<UserAttributes>, opts?: FindOptions) {
     return await this.UserDAO.fetchOne({
       where: { ...record },

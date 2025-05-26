@@ -46,6 +46,12 @@ enum TransactionTypes {
   FEE = "FEE",
 }
 
+enum RepaymentStatus {
+  PENDING = "PENDING",
+  PAID = "PAID",
+  LATE = "LATE",
+}
+
 export {
   AccountStatus,
   OtpTypes,
@@ -53,5 +59,6 @@ export {
   LoanStatus,
   LoanRepaymentFrequency,
   TransactionStatus,
-  TransactionTypes
+  TransactionTypes,
+  RepaymentStatus
 }

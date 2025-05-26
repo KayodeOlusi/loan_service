@@ -15,5 +15,13 @@ export type LoanAttributes = {
   updatedAt: Date;
 }
 
+export enum Tier {
+  TIER_ONE = "tier_one",
+  TIER_TWO = "tier_two",
+  TIER_THREE = "tier_three",
+  TIER_FOUR = "tier_four",
+  TIER_FIVE = "tier_five"
+}
+
 export interface LoanCreationBody extends Omit<LoanAttributes, "id" | "createdAt" | "updatedAt"> {
 }
