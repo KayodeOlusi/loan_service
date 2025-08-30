@@ -6,7 +6,6 @@ export type LoanAttributes = {
   amount: number;
   interest_rate: number;
   status: LoanStatus;
-  tenure_months: number;
   repayment_frequency: LoanRepaymentFrequency;
   purpose: string;
   start_date: Date;

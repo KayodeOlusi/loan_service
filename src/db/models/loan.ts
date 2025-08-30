@@ -13,7 +13,6 @@ class Loan extends Model<LoanAttributes, LoanCreationAttributes> implements Loan
   public amount!: number;
   public interest_rate!: number;
   public status!: LoanStatus;
-  public tenure_months!: number;
   public repayment_frequency!: LoanRepaymentFrequency;
   public purpose!: string;
   public start_date!: Date;
@@ -41,7 +40,6 @@ Loan.init({
   user_id: DataTypes.UUID,
   purpose: DataTypes.STRING,
   amount: DataTypes.DECIMAL(30, 2),
-  tenure_months: DataTypes.INTEGER,
   interest_rate: DataTypes.DECIMAL(30, 2),
   start_date: DataTypes.DATE,
   end_date: DataTypes.DATE,

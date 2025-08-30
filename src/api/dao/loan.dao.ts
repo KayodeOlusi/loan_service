@@ -19,6 +19,10 @@ class LoanDao {
     return await (db.models.Loan[method] as Function)(field, query);
   }
 
+  async transaction() {
+    return await db.sequelize.transaction();
+  }
+
   async fetchByPk(key: string, opts?: FindOptions) {
     return await db.models.Loan.findByPk(key, opts);
   }

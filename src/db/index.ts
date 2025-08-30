@@ -1,12 +1,13 @@
 import sequelize from "./init";
-import { User, Otp, Account, Loan, Transaction } from "./models";
+import { User, Otp, Account, Loan, Transaction, Repayment } from "./models";
 
 const models = {
   User,
   Account,
   Otp,
   Loan,
-  Transaction
+  Transaction,
+  Repayment,
 }
 
 

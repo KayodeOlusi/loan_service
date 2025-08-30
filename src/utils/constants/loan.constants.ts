@@ -1,4 +1,5 @@
 import { Tier } from "../../typings/loan";
+import { LoanRepaymentFrequency } from "../../typings/enums";
 
 class LoanConstants {
   private readonly MINIMUM_LOAN_AMOUNT: number = 10_000;

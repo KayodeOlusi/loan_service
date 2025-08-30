@@ -20,6 +20,7 @@ function verifyReqToken(data: string = "") {
 async function verifyUserDetails(email: string = "") {
   const user = await userService.getUserByField({ email });
   if (!user) throw new NotFoundException("User does not exist");
+  if (!user.is_verified) throw new UnauthorizedException("User is not verified");
 
   return user;
 }

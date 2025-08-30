@@ -26,7 +26,12 @@ function createLoanRoute() {
     "/tier/config/all",
     [RateLimiter({ max: 10 }), isAuthenticated],
     Controller.getAllTiersConfig
-  )
+  );
+  router.post(
+    "/request",
+    [RateLimiter({ max: 5, exp: 120 }), isAuthenticated],
+    Controller.requestLoan
+  );
 
   return router;
 }

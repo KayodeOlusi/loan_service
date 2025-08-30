@@ -33,6 +33,16 @@ class BadRequestException extends Error implements ErrorCode {
   }
 }
 
+class UnprocessableEntityException extends Error implements ErrorCode {
+  code: number;
+
+  constructor(message: string) {
+    super(message);
+    this.name = "UnprocessableEntityException";
+    this.code = HttpStatusCodes.UNPROCESSABLE_ENTITY;
+  }
+}
+
 class ValidationException extends Error implements ErrorCode {
   code: number;
 
@@ -80,5 +90,6 @@ export {
   BadRequestException,
   ResourceExistsException,
   ForbiddenException,
-  UnauthorizedException
+  UnauthorizedException,
+  UnprocessableEntityException
 }
