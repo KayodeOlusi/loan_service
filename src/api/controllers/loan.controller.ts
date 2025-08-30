@@ -231,15 +231,6 @@ class LoanController {
     }
   }
 
-  /**
-   * Steps
-   * 1. Check if a user is eligible for a loan ✅
-   *     - If a user's account is active and is verified ✅
-   *     - If a user has up to 3 unpaid loans, they are not eligible ✅
-   * 2. Check the tier configuration for user ✅
-   * 3. Check the payment frequency and the amount the user wants to borrow
-   * 4. Create a loan record and transaction record and repayment record based on the payment frequency
-   * */
   requestLoan = async (req: Request, res: Response) => {
     let t;
     try {
