@@ -29,7 +29,7 @@ class AccountController {
     }
   }
 
-  getAccount = async (req: Request, res: Response) => {
+  getAccountByUser = async (req: Request, res: Response) => {
     try {
       const user_id = req.params.user_id;
       const account = await this.AccountService.getAccount({
@@ -40,7 +40,34 @@ class AccountController {
           status: false,
           code: HttpStatusCodes.NOT_FOUND,
           data: null,
-          message: "Account does not exist"
+          message: "User account does not exist!"
+        });
+      }
+
+      return ApiBuilders.buildResponse(res, {
+        status: true,
+        data: account,
+        message: "User account fetched successfully",
+        code: HttpStatusCodes.SUCCESSFUL_REQUEST
+      });
+    } catch (e) {
+      const error = e as Exception;
+      handleError(error, res);
+    }
+  }
+
+  getAccount = async (req: Request, res: Response) => {
+    try {
+      const id = req.params.id;
+      const account = await this.AccountService.getAccount({
+        id,
+      });
+      if (!account) {
+        return ApiBuilders.buildResponse(res, {
+          status: false,
+          code: HttpStatusCodes.NOT_FOUND,
+          data: null,
+          message: "Account does not exist!"
         });
       }
 

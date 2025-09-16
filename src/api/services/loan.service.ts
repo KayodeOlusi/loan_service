@@ -26,6 +26,13 @@ class LoanService {
     );
   }
 
+  async getLoan(record: Partial<LoanAttributes>, opts?: FindOptions) {
+    return await this.LoanDAO.fetchOne({
+      where: { ...record },
+      ...opts
+    });
+  }
+
   async dbTransactionInstance() {
     return await this.LoanDAO.transaction();
   }
@@ -99,7 +106,7 @@ class LoanService {
     const startDate = loan.start_date ? new Date(loan.start_date) : new Date();
 
     let count: number;
-    let intervalDays: number; // default set in switch
+    let intervalDays: number;
 
     switch (frequency) {
       case LoanRepaymentFrequency.WEEKLY:
@@ -127,7 +134,8 @@ class LoanService {
         intervalDays = 7;
     }
 
-    const totalAmount = Number(loan.amount) || 0;
+    const interestAmount = (Number(loan.amount) * (Number(loan.interest_rate) / 100)) || 0;
+    const totalAmount = +(Number(loan.amount) + interestAmount).toFixed(2);
     const perInstRaw = totalAmount / count;
     const perInst = Math.floor(perInstRaw * 100) / 100;
     const records: RepaymentCreationBody[] = [];

@@ -40,6 +40,13 @@ class LoanController {
     return user;
   }
 
+  private async getLoanById(id: string) {
+    const loan = await this.LoanService.getLoan({ id });
+    if (!loan) throw new NotFoundException("Loan not found");
+
+    return loan;
+  }
+
   private async getUserAccount(user_id: string) {
     const account = await this.AccountService.getAccount({ user_id });
     if (!account) throw new NotFoundException("User account not found");
@@ -239,14 +246,14 @@ class LoanController {
       t = await this.sequelizeTransaction();
 
       await this.checkTotalUnpaidLoans(user.id);
-      await this.checkUserTier(user.id, req.body.amount);
+      await this.checkUserTier(user.id, body.amount);
 
       const repaymentConfig = this.getRepaymentFrequency(body);
       if (!repaymentConfig) {
         return ApiBuilders.buildResponse(res, {
           data: null,
           status: false,
-          message: "Could not determine repayment configuration. Please check your start and end dates.",
+          message: "Could not determine repayment configuration. Please try again later.",
           code: HttpStatusCodes.UNPROCESSABLE_ENTITY
         });
       }
@@ -277,6 +284,56 @@ class LoanController {
       });
     } catch (e) {
       if (t) t.rollback();
+      const error = e as Exception;
+      return handleError(error, res);
+    }
+  }
+
+  getLoan = async (req: Request, res: Response) => {
+    try {
+      const id = req.params.id;
+      const loan = await this.getLoanById(id);
+
+      return ApiBuilders.buildResponse(res, {
+        status: true,
+        data: loan,
+        message: "Loan fetched successfully",
+        code: HttpStatusCodes.SUCCESSFUL_REQUEST
+      });
+    } catch (e) {
+      const error = e as Exception;
+      return handleError(error, res);
+    }
+  }
+
+  getAllLoans = async (req: Request, res: Response) => {
+    try {
+      const loans = await this.LoanService.getLoans({});
+
+      return ApiBuilders.buildResponse(res, {
+        status: true,
+        data: loans,
+        message: "All loans fetched successfully",
+        code: HttpStatusCodes.SUCCESSFUL_REQUEST
+      });
+    } catch (e) {
+      const error = e as Exception;
+      return handleError(error, res);
+    }
+  }
+
+  getAllUserLoans = async (req: Request, res: Response) => {
+    try {
+      const user = res.locals.user;
+      const loans = await this.LoanService.getLoans({ user_id: user.id });
+
+      return ApiBuilders.buildResponse(res, {
+        status: true,
+        data: loans,
+        message: "User loans fetched successfully",
+        code: HttpStatusCodes.SUCCESSFUL_REQUEST
+      });
+    } catch (e) {
       const error = e as Exception;
       return handleError(error, res);
     }
