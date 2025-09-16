@@ -4,7 +4,7 @@ import DbBootstrap from "./db/bootstrap";
 import * as RedisConnection from "./lib/pkg/redis";
 import * as EmailTransport from "./lib/transports/email";
 
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT ?? 8000;
 const server = http.createServer(app);
 
 DbBootstrap(async () => {
