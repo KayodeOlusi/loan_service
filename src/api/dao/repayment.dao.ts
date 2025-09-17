@@ -1,6 +1,13 @@
 import db from "../../db";
-import Repayment, { RepaymentCreationAttributes } from "../../db/models/repayment";
-import { CreateOptions, DestroyOptions, FindOptions, Model, UpdateOptions } from "sequelize";
+import {
+  BindOrReplacements,
+  CreateOptions,
+  DestroyOptions,
+  FindOptions,
+  Model,
+  UpdateOptions
+} from "sequelize";
+import { RepaymentCreationAttributes } from "../../db/models/repayment";
 import { RepaymentAttributes } from "../../typings/repayment";
 
 class RepaymentDao {
@@ -37,6 +44,10 @@ class RepaymentDao {
 
   async delete(opts: DestroyOptions) {
     return await db.models.Repayment.destroy(opts);
+  }
+
+  async query(query: string, replacements?: BindOrReplacements) {
+    return await db.sequelize.query(query, { replacements });
   }
 }
 

@@ -33,6 +33,10 @@ class LoanService {
     });
   }
 
+  async getLoanById(id: string, opts?: FindOptions) {
+    return await this.LoanDAO.fetchByPk(id, opts);
+  }
+
   async dbTransactionInstance() {
     return await this.LoanDAO.transaction();
   }

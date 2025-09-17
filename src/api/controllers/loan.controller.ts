@@ -15,15 +15,15 @@ import {
   TransactionStatus,
   TransactionTypes
 } from "../../typings/enums";
-import { LoanService, TransactionService, UserService, AccountService } from "../services";
-import { Exception, NotFoundException, UnprocessableEntityException } from "../../lib/errors";
-import { TransactionCreationBody } from "../../typings/transaction";
 import Logger from "../../lib/logger";
+import { TransactionCreationBody } from "../../typings/transaction";
+import { Exception, NotFoundException, UnprocessableEntityException } from "../../lib/errors";
+import { LoanService, TransactionService, UserService, AccountService, RepaymentService } from "../services";
 
 @autoInjectable()
 class LoanController {
   private readonly LoanService: LoanService;
-  private readonly LoanConstants: LoanConstants;
+  private readonly RepaymentService: RepaymentService;
   private readonly TransactionService: TransactionService;
   private readonly UserService: UserService;
   private readonly AccountService: AccountService;
@@ -140,7 +140,7 @@ class LoanController {
       );
 
       for (const record of records) {
-        await this.LoanService.createRepayment(record, opts);
+        await this.RepaymentService.createRepayment(record, opts);
       }
     } catch (e) {
       throw e;
@@ -170,13 +170,13 @@ class LoanController {
     _transactionService: TransactionService,
     _userService: UserService,
     _accountService: AccountService,
-    _loanConstants: LoanConstants,
+    _repaymentService: RepaymentService,
     _dataHelpers: DataHelpers
   ) {
     this.LoanService = _loanService;
     this.TransactionService = _transactionService;
     this.UserService = _userService;
-    this.LoanConstants = _loanConstants;
+    this.RepaymentService = _repaymentService;
     this.DataHelpers = _dataHelpers;
     this.AccountService = _accountService;
   }

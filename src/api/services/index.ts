@@ -5,3 +5,4 @@ export { default as OtpService } from "./otp.service";
 export { default as MailService } from "./mail.service";
 export { default as TransactionService } from "./transaction.service";
 export { default as LoanService } from "./loan.service";
+export { default as RepaymentService } from "./repayment.service";
