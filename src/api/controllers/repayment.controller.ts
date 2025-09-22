@@ -17,8 +17,15 @@ class RepaymentController {
     if (!loan) {
       throw new NotFoundException("Loan not found");
     }
-
     return loan;
+  }
+
+  private async verifyAndGetRepaymentById(id: string) {
+    const repayment = await this.RepaymentService.getById(id);
+    if (!repayment) {
+      throw new NotFoundException("Repayment not found");
+    }
+    return repayment;
   }
 
   constructor(_repaymentService: RepaymentService, _loanService: LoanService) {
@@ -172,6 +179,29 @@ class RepaymentController {
       return ApiBuilders.buildResponse(res, {
         data,
         message: "Upcoming repayments fetched successfully",
+        code: HttpStatusCodes.SUCCESSFUL_REQUEST,
+        status: true
+      });
+    } catch (e) {
+      const error = e as Exception;
+      handleError(error, res);
+    }
+  }
+
+  updateRepaymentStatus = async (req: Request, res: Response) => {
+    try {
+      const id = req.params.id;
+      const { status } = req.body;
+
+      await this.verifyAndGetRepaymentById(id);
+      await this.RepaymentService.updateRepayment(
+        { status },
+        { where: { id }}
+      );
+
+      return ApiBuilders.buildResponse(res, {
+        data: null,
+        message: "Repayment status updated successfully",
         code: HttpStatusCodes.SUCCESSFUL_REQUEST,
         status: true
       });

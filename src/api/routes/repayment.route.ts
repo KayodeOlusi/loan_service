@@ -73,7 +73,7 @@ function createRepaymentRoute() {
   router.patch(
     "/:id/status",
     [RateLimiter({ max: 5, exp: 120 }), isAuthenticated],
-    () => {}
+    Controller.updateRepaymentStatus
   );
 
   return router;
