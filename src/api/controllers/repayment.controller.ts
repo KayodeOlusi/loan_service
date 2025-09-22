@@ -193,7 +193,6 @@ class RepaymentController {
       const id = req.params.id;
       const { status } = req.body;
 
-      await this.verifyAndGetRepaymentById(id);
       await this.RepaymentService.updateRepayment(
         { status },
         { where: { id }}

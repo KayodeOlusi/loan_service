@@ -1,7 +1,9 @@
 import express from "express";
 import { container } from "tsyringe";
+import validator from "../../lib/validators";
 import { RepaymentController } from "../controllers";
 import { isAuthenticated, RateLimiter } from "../middlewares";
+import RepaymentValidatorSchema from "../../lib/validators/repayment-validator.schema";
 
 const router = express.Router();
 const Controller = container.resolve(RepaymentController);
@@ -72,7 +74,7 @@ function createRepaymentRoute() {
   // Update repayment status (e.g., mark as confirmed/failed) — staff/admin
   router.patch(
     "/:id/status",
-    [RateLimiter({ max: 5, exp: 120 }), isAuthenticated],
+    [RateLimiter({ max: 5, exp: 120 }), validator(RepaymentValidatorSchema.UpdateRepayment), isAuthenticated],
     Controller.updateRepaymentStatus
   );
 
