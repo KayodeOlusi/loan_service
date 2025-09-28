@@ -54,21 +54,14 @@ function createRepaymentRoute() {
   router.get(
     "/due/overdue",
     [RateLimiter({ max: 10 }), isAuthenticated],
-    () => {}
+    Controller.getUserOverDueRepayments
   );
 
   // Make a repayment against a specific repayment item (e.g., pay installment)
   router.post(
     "/:id/pay",
-    [RateLimiter({ max: 5, exp: 120 }), isAuthenticated],
-    () => {}
-  );
-
-  // Manually record a repayment (e.g., bank transfer) — typically staff/admin
-  router.post(
-    "/manual",
-    [RateLimiter({ max: 5, exp: 120 }), isAuthenticated],
-    () => {}
+    [RateLimiter({ max: 20, exp: 120 }), validator(RepaymentValidatorSchema.MakeRepayment), isAuthenticated],
+    Controller.makeRepayment
   );
 
   // Update repayment status (e.g., mark as confirmed/failed) — staff/admin

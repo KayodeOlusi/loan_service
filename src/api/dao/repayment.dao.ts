@@ -4,7 +4,7 @@ import {
   CreateOptions,
   DestroyOptions,
   FindOptions,
-  Model,
+  Model, QueryOptions,
   UpdateOptions
 } from "sequelize";
 import { RepaymentCreationAttributes } from "../../db/models/repayment";
@@ -46,8 +46,8 @@ class RepaymentDao {
     return await db.models.Repayment.destroy(opts);
   }
 
-  async query(query: string, replacements?: BindOrReplacements) {
-    return await db.sequelize.query(query, { replacements });
+  async query(query: string, replacements?: BindOrReplacements, opts?: QueryOptions) {
+    return await db.sequelize.query(query, { replacements, ...opts });
   }
 }
 

@@ -1,6 +1,12 @@
 import { autoInjectable } from "tsyringe";
 import { RepaymentDao } from "../dao";
-import { BindOrReplacements, CreateOptions, FindOptions, UpdateOptions } from "sequelize";
+import {
+  BindOrReplacements,
+  CreateOptions,
+  FindOptions,
+  QueryOptions,
+  UpdateOptions
+} from "sequelize";
 import { RepaymentAttributes, RepaymentCreationBody } from "../../typings/repayment";
 
 @autoInjectable()
@@ -25,6 +31,13 @@ class RepaymentService {
     });
   }
 
+  async sumRepayments(column: keyof Partial<RepaymentAttributes>, where: Partial<RepaymentAttributes>, opts?: FindOptions): Promise<number> {
+    return await this.RepaymentDao.func("sum", column, {
+      where,
+      ...opts
+    });
+  }
+
   async getById(id: string, opts?: FindOptions) {
     return await this.RepaymentDao.fetchByPk(id, opts);
   }
@@ -37,8 +50,12 @@ class RepaymentService {
     return await this.RepaymentDao.create(data, opts);
   }
 
-  async queryRepayments(query: string, replacements?: BindOrReplacements) {
-    return await this.RepaymentDao.query(query, replacements);
+  async queryRepayments(query: string, replacements?: BindOrReplacements, opts?: QueryOptions) {
+    return await this.RepaymentDao.query(query, replacements, opts);
+  }
+
+  async dbTransactionInstance() {
+    return await this.RepaymentDao.transaction();
   }
 }
 
