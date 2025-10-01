@@ -286,18 +286,6 @@ class RepaymentController {
     }
   }
 
-  /**
-   *  1. Verify Repayment and Status ✅
-   *  2. Verify Loan and Status and User ✅
-   *  3. Check for Unsettled Previous Repayments ✅
-   *  4. Check Total Amount Paid vs Total Amount Due for Loan ✅
-   *  5. Validate Amount Paid vs Amount Due for This Repayment ✅
-   *  7. Update Current Repayment as Paid ✅
-   *  8. Create Transaction Record for This Repayment ✅
-   *  9. Handle Overpayment (Allocate to Upcoming Repayments) ✅
-   * 10. Update Loan Status if All Repayments are Paid ✅
-   * */
-    // TODO: Add new repayment_amount column
   makeRepayment = async (req: Request, res: Response) => {
     let _trx;
     try {
