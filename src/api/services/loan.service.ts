@@ -152,13 +152,14 @@ class LoanService {
         const accumulated = perInst * (count - 1);
         amountDue = +(totalAmount - accumulated).toFixed(2);
       } else {
-        amountDue = +perInst.toFixed(2);
+        amountDue = +perInst.toFixed(2 );
       }
 
       records.push({
         loan_id: loan.id,
         amount_due: amountDue,
         amount_paid: 0,
+        repayment_amount: amountDue,
         status: RepaymentStatus.PENDING,
         due_date: dueDate
       });

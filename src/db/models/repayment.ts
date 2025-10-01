@@ -12,6 +12,7 @@ class Repayment extends Model<RepaymentAttributes, RepaymentCreationAttributes> 
   public date_paid!: Date;
   public status!: RepaymentStatus;
   public amount_paid!: number;
+  public repayment_amount!: number;
   public due_date!: Date;
 
   public readonly createdAt!: Date;
@@ -40,6 +41,7 @@ Repayment.init({
   status: DataTypes.ENUM(RepaymentStatus.PENDING, RepaymentStatus.LATE, RepaymentStatus.PAID),
   amount_paid: DataTypes.DECIMAL(30, 2),
   amount_due: DataTypes.DECIMAL(30, 2),
+  repayment_amount: DataTypes.DECIMAL(30, 2),
   date_paid: DataTypes.DATE,
   due_date: DataTypes.DATE,
   createdAt: DataTypes.DATE,

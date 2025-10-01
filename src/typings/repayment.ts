@@ -7,6 +7,7 @@ export type RepaymentAttributes = {
   amount_paid: number;
   date_paid?: Date;
   due_date: Date;
+  repayment_amount: number;
   status: RepaymentStatus;
   createdAt: Date;
   updatedAt: Date;
