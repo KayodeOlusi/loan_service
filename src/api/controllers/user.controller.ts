@@ -7,6 +7,7 @@ import { AccountStatus, OtpTypes } from "../../typings/enums";
 import { handleError } from "../../utils/handlers/error.handler";
 import { Exception, ValidationException } from "../../lib/errors";
 import { AccountService, EncryptService, MailService, OtpService, UserService } from "../services";
+import { Queue } from "../../lib/queue";
 
 @autoInjectable()
 class UserController {
@@ -97,11 +98,21 @@ class UserController {
         user_id: newUser.id,
         type: OtpTypes.VERIFY_EMAIL
       });
-      await this.MailService.sendMail({
-        to: newUser.email,
-        code: verificationCode,
-        type: OtpTypes.VERIFY_EMAIL
-      });
+
+      Queue.channel.publish(
+        Queue.emailQueue.exchange,
+        Queue.emailQueue.routingKey,
+        Buffer.from(JSON.stringify({
+          to: newUser.email,
+          code: verificationCode,
+          type: OtpTypes.VERIFY_EMAIL
+        }))
+      );
+      // await this.MailService.sendMail({
+      //   to: newUser.email,
+      //   code: verificationCode,
+      //   type: OtpTypes.VERIFY_EMAIL
+      // });
 
       return ApiBuilders.buildResponse(res, {
         status: true,
