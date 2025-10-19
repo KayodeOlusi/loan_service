@@ -11,11 +11,31 @@ enum EmailTypes {
   CHANGE_PASSWORD = "Change Password"
 }
 
+enum LoanTypes {
+  LOAN_PAYMENT = "Loan Payment",
+  LOAN_REPAYMENT = "Loan Repayment",
+  REPAYMENT = "Repayment"
+}
+
+enum AlertTypes {
+  EMAIL_ALERT = "Email Alert",
+}
+
 enum OtpTypes {
   VERIFY_EMAIL = "VERIFY_EMAIL",
   FORGOT_PASSWORD = "FORGOT_PASSWORD",
   RESET_PASSWORD = "RESET_PASSWORD",
   CHANGE_PASSWORD = "CHANGE_PASSWORD"
+}
+
+enum LoanEmailTypes {
+  LOAN_PAYMENT = "LOAN_PAYMENT",
+  LOAN_REPAYMENT = "LOAN_REPAYMENT",
+  REPAYMENT = "REPAYMENT"
+}
+
+enum EmailMalfunctionTypes {
+  ERROR = "ERROR"
 }
 
 enum LoanStatus {
@@ -60,5 +80,9 @@ export {
   LoanRepaymentFrequency,
   TransactionStatus,
   TransactionTypes,
-  RepaymentStatus
+  RepaymentStatus,
+  LoanEmailTypes,
+  LoanTypes,
+  EmailMalfunctionTypes,
+  AlertTypes,
 }

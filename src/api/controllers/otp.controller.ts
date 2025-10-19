@@ -2,15 +2,15 @@ import { Request, Response } from "express";
 import { autoInjectable } from "tsyringe";
 import { ApiBuilders } from "../api.builders";
 import { HttpStatusCodes } from "../../lib/codes";
-import { Exception, ValidationException } from "../../lib/errors";
-import { MailService, OtpService, UserService } from "../services";
+import { OtpService, UserService } from "../services";
 import { handleError } from "../../utils/handlers/error.handler";
+import { Exception, ValidationException } from "../../lib/errors";
+import EmailQueueWorker from "../../utils/workers/email-queue.worker";
 
 @autoInjectable()
 class OtpController {
   private OtpService: OtpService;
   private UserService: UserService;
-  private MailService: MailService;
 
   private async _getAndVerifyUserByField(where: string, target: string) {
     const user = await this.UserService.getUserByField({
@@ -21,10 +21,9 @@ class OtpController {
     return user;
   }
 
-  constructor(_otpService: OtpService, _userService: UserService, _mailService: MailService) {
+  constructor(_otpService: OtpService, _userService: UserService) {
     this.OtpService = _otpService;
     this.UserService = _userService;
-    this.MailService = _mailService;
   }
 
   verifyOtp = async (req: Request, res: Response) => {
@@ -36,6 +35,13 @@ class OtpController {
         type: otpType,
         code
       });
+
+      if (otpType === "VERIFY_EMAIL") {
+        await this.UserService.update(
+          { is_verified: true },
+          { where: { email } }
+        );
+      }
 
       return ApiBuilders.buildResponse(res, {
         status: true,
@@ -63,7 +69,7 @@ class OtpController {
         type: otpType
       });
 
-      await this.MailService.sendMail({
+      EmailQueueWorker.addToQueue({
         to: user.email,
         type: otpType,
         code
@@ -95,7 +101,7 @@ class OtpController {
         type: otpType
       });
 
-      await this.MailService.sendMail({
+      EmailQueueWorker.addToQueue({
         to: user.email,
         type: otpType,
         code

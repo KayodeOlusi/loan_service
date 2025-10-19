@@ -5,11 +5,11 @@ import { HttpStatusCodes } from "../../lib/codes";
 import { LoanAttributes, Tier } from "../../typings/loan";
 import { CreateOptions } from "sequelize";
 import { UserAttributes } from "../../typings/user";
-import { LoanConstants } from "../../utils/constants";
 import { DataHelpers } from "../../utils/helpers";
 import { LoanCreationAttributes } from "../../db/models/loan";
 import { handleError } from "../../utils/handlers/error.handler";
 import {
+  LoanEmailTypes,
   LoanRepaymentFrequency,
   LoanStatus,
   TransactionStatus,
@@ -19,6 +19,7 @@ import Logger from "../../lib/logger";
 import { TransactionCreationBody } from "../../typings/transaction";
 import { Exception, NotFoundException, UnprocessableEntityException } from "../../lib/errors";
 import { LoanService, TransactionService, UserService, AccountService, RepaymentService } from "../services";
+import EmailQueueWorker from "../../utils/workers/email-queue.worker";
 
 @autoInjectable()
 class LoanController {
@@ -275,6 +276,17 @@ class LoanController {
 
       await t.commit();
       Logger.info(`Loan request created successfully for user ${user.id}`);
+
+      EmailQueueWorker.addToQueue({
+        to: user.email,
+        type: LoanEmailTypes.LOAN_PAYMENT,
+        message: `
+          Dear ${user.first_name},
+          Your loan request of amount ₦${loan.amount} has been processed successfully.
+          Please check your account dashboard for more details on your loan and repayment schedule.
+          Thank you for choosing our services.
+         `
+      });
 
       return ApiBuilders.buildResponse(res, {
         status: true,

@@ -6,8 +6,8 @@ import { UserAttributes, UserCreationBody } from "../../typings/user";
 import { AccountStatus, OtpTypes } from "../../typings/enums";
 import { handleError } from "../../utils/handlers/error.handler";
 import { Exception, ValidationException } from "../../lib/errors";
-import { AccountService, EncryptService, MailService, OtpService, UserService } from "../services";
-import { Queue } from "../../lib/queue";
+import EmailQueueWorker from "../../utils/workers/email-queue.worker";
+import { AccountService, EncryptService, OtpService, UserService } from "../services";
 
 @autoInjectable()
 class UserController {
@@ -15,20 +15,17 @@ class UserController {
   private AccountService: AccountService;
   private EncryptService: EncryptService;
   private OtpService: OtpService;
-  private MailService: MailService;
 
   constructor(
     _userService: UserService,
     _accountService: AccountService,
     _encryptService: EncryptService,
     _otpService: OtpService,
-    _mailService: MailService
   ) {
     this.UserService = _userService;
     this.AccountService = _accountService;
     this.EncryptService = _encryptService;
     this.OtpService = _otpService;
-    this.MailService = _mailService;
   }
 
   private async _createUserRecord(data: UserCreationBody) {
@@ -99,20 +96,11 @@ class UserController {
         type: OtpTypes.VERIFY_EMAIL
       });
 
-      Queue.channel.publish(
-        Queue.emailQueue.exchange,
-        Queue.emailQueue.routingKey,
-        Buffer.from(JSON.stringify({
-          to: newUser.email,
-          code: verificationCode,
-          type: OtpTypes.VERIFY_EMAIL
-        }))
-      );
-      // await this.MailService.sendMail({
-      //   to: newUser.email,
-      //   code: verificationCode,
-      //   type: OtpTypes.VERIFY_EMAIL
-      // });
+      EmailQueueWorker.addToQueue({
+        to: newUser.email,
+        code: verificationCode,
+        type: OtpTypes.VERIFY_EMAIL
+      });
 
       return ApiBuilders.buildResponse(res, {
         status: true,

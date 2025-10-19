@@ -6,6 +6,7 @@ import { AccountService, LoanService, RepaymentService, TransactionService } fro
 import { Exception, NotFoundException } from "../../lib/errors";
 import { handleError } from "../../utils/handlers/error.handler";
 import {
+  LoanEmailTypes,
   LoanStatus,
   RepaymentStatus,
   TransactionStatus,
@@ -14,6 +15,7 @@ import {
 import { CreateOptions, Op } from "sequelize";
 import { RepaymentAttributes } from "../../typings/repayment";
 import { TransactionCreationBody } from "../../typings/transaction";
+import EmailQueueWorker from "../../utils/workers/email-queue.worker";
 
 @autoInjectable()
 class RepaymentController {
@@ -350,15 +352,12 @@ class RepaymentController {
       );
 
       if (totalAmountPaidForLoan) {
-        let { total_paid, total_due } = totalAmountPaidForLoan[0] as {
+        let { total_due } = totalAmountPaidForLoan[0] as {
           total_paid: number,
           total_due: number
         };
-        let totalPaid = Number(total_paid) ?? 0;
         const totalDue = Number(total_due) ?? 0;
-
-        const totalAmountToPayAndPaid = body.amount + totalPaid;
-        if (totalAmountToPayAndPaid > totalDue) {
+        if (body.amount > totalDue) {
           return ApiBuilders.buildResponse(res, {
             data: null,
             message: "Total amount paid exceeds total amount due for the loan.",
@@ -489,6 +488,15 @@ class RepaymentController {
         { new_status: LoanStatus.PAID_OFF, current_status: LoanStatus.PENDING, paid_status: RepaymentStatus.PAID },
         { transaction: _trx }
       );
+
+      EmailQueueWorker.addToQueue({
+        to: user.email,
+        type: LoanEmailTypes.REPAYMENT,
+        message: `
+          Dear ${user.first_name},
+          Your repayment of amount ₦${body.amount.toFixed(2)} for ${loan.purpose} loan has been received successfully.
+        `
+      });
 
       await _trx.commit();
       return ApiBuilders.buildResponse(res, {
