@@ -52,13 +52,13 @@ const config: DBConfigType = {
     port: Number(process.env.TEST_DB_PORT),
   },
   production: {
-    username: "root",
-    password: "",
-    database: "database_production",
-    host: "127.0.0.1",
+    username: process.env.DB_USERNAME as string,
+    password: process.env.DB_PASSWORD as string,
+    database: process.env.DB_NAME as string,
+    host: process.env.DB_HOST as string,
     dialect: "mysql",
     logging: false,
-    port: 3306,
+    port: Number(process.env.DB_PORT),
   },
 };
 
