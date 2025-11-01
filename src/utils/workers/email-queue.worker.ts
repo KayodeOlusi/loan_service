@@ -26,6 +26,7 @@ class EmailQueueWorker {
         try {
           await this.MailService.sendMail(content);
           Logger.info("Successfully processed email message to " + content.to);
+          this._queue.channel.ack(msg);
         } catch (e) {
           Logger.error("Error processing email message", e as Error);
 
@@ -36,17 +37,19 @@ class EmailQueueWorker {
               this._queue.emailQueue.deadLetterRoutingKey,
               msg.content,
               { headers: { "x-retries": retries } },
-            )
+            );
+            this._queue.channel.ack(msg);
           } else {
             this._queue.channel.publish(
               this._queue.emailQueue.exchange,
               this._queue.emailQueue.retryRoutingKey,
               msg.content,
               { headers: { "x-retries": retries + 1 } },
-            )
+            );
+            this._queue.channel.nack(msg, false, false);
           }
+          return;
         }
-        this._queue.channel.ack(msg);
       }
     });
     this._queue.channel.consume(retryQName, async (msg) => {
@@ -56,7 +59,6 @@ class EmailQueueWorker {
         const content = JSON.parse(message);
 
         Logger.info("Email message ready for retry: " + content.to);
-        this._queue.channel.ack(msg);
       }
     });
     this._queue.channel.consume(deadLetterQName, async (msg) => {
@@ -85,7 +87,8 @@ class EmailQueueWorker {
       this._queue.channel.publish(
         this._queue.emailQueue.exchange,
         this._queue.emailQueue.routingKey,
-        Buffer.from(JSON.stringify(data))
+        Buffer.from(JSON.stringify(data)),
+        { headers: { "x-retries": 0 } }
       );
       Logger.info("Added new email job to the queue.");
     } catch (error) {
