@@ -33,8 +33,8 @@ DbBootstrap()
     process.on("SIGTERM", shutdown);
     process.on("SIGINT", shutdown);
   })
-  .catch(function () {
-    Logger.info("Failed to bootstrap database");
+  .catch(function (err) {
+    Logger.error("Failed to bootstrap database", err);
     process.exit(1);
   })
 
