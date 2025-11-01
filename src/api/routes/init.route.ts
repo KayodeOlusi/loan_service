@@ -17,6 +17,18 @@ function buildAppRoutes(app: Express) {
         data: null
       });
     });
+    app.get(baseRoutes("/health"), (req, res) => {
+      return ApiBuilders.buildResponse(res, {
+        status: true,
+        code: HttpStatusCodes.SUCCESSFUL_REQUEST,
+        message: "ok",
+        data: null,
+        addOns: {
+          timestamp: new Date().toISOString(),
+          uptime: process.uptime(),
+        }
+      });
+    })
 
     app.use(baseRoutes("/user"), UserRoute());
     app.use(baseRoutes("/account"), AccountRoute());
