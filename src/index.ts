@@ -13,7 +13,7 @@ const server = http.createServer(app);
 function shutdown() {
   Logger.info("Shutting down server...");
   server.close(function () {
-    Logger.info("Shutting down server...");
+    Logger.info("HTTP server closed...");
     process.exit(0);
   });
 }
