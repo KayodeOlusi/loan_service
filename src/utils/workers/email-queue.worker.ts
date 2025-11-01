@@ -40,12 +40,10 @@ class EmailQueueWorker {
             );
             this._queue.channel.ack(msg);
           } else {
-            this._queue.channel.publish(
-              this._queue.emailQueue.exchange,
-              this._queue.emailQueue.retryRoutingKey,
-              msg.content,
-              { headers: { "x-retries": retries + 1 } },
-            );
+            msg.properties.headers = {
+              ...(msg.properties.headers || {}),
+              "x-retries": retries + 1
+            };
             this._queue.channel.nack(msg, false, false);
           }
           return;
