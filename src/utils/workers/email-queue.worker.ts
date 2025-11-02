@@ -57,6 +57,7 @@ class EmailQueueWorker {
         const content = JSON.parse(message);
 
         Logger.info("Email message ready for retry: " + content.to);
+        this._queue.channel.ack(msg);
       }
     });
     this._queue.channel.consume(deadLetterQName, async (msg) => {
