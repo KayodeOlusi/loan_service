@@ -31,6 +31,7 @@ class EmailQueueWorker {
 
           const retries = msg.properties.headers?.["x-retries"] || 0;
           if (retries >= 3) {
+            Logger.info(`Max retries reached for email to ${content.to}. Sending to dead letter queue.`);
             this._queue.channel.publish(
               this._queue.emailQueue.exchange,
               this._queue.emailQueue.deadLetterRoutingKey,
@@ -38,6 +39,7 @@ class EmailQueueWorker {
               { headers: { "x-retries": retries } },
             )
           } else {
+            Logger.info(`Routing email to ${content.to} to retry queue. Attempt #${retries + 1}`);
             this._queue.channel.publish(
               this._queue.emailQueue.exchange,
               this._queue.emailQueue.retryRoutingKey,
@@ -46,16 +48,6 @@ class EmailQueueWorker {
             )
           }
         }
-        this._queue.channel.ack(msg);
-      }
-    });
-    this._queue.channel.consume(retryQName, async (msg) => {
-      if (msg) {
-        Logger.info("Email retry queue worker received a new message.");
-        const message = msg.content.toString();
-        const content = JSON.parse(message);
-
-        Logger.info("Email message ready for retry: " + content.to);
         this._queue.channel.ack(msg);
       }
     });
